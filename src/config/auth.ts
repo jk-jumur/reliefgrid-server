@@ -4,6 +4,7 @@ import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
 
 import { client, db } from "./database.js";
+import { USER_ROLES } from "../constants/roles.js";
 
 const BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET;
 const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
@@ -30,11 +31,50 @@ export const auth = betterAuth({
 
   trustedOrigins: [CLIENT_URL],
 
+  user: {
+    additionalFields: {
+      role: {
+        type: USER_ROLES,
+        required: false,
+        defaultValue: "citizen",
+        input: false,
+      },
+
+      phone: {
+        type: "string",
+        required: false,
+      },
+
+      organizationId: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+
+      isActive: {
+        type: "boolean",
+        required: false,
+        defaultValue: true,
+        input: false,
+      },
+    },
+  },
+
   emailAndPassword: {
     enabled: true,
   },
 
   plugins: [
-    jwt(),
+    jwt({
+      jwt: {
+        definePayload: ({ user }) => ({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          organizationId: user.organizationId ?? null,
+          isActive: user.isActive,
+        }),
+      },
+    }),
   ],
 });

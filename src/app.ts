@@ -2,6 +2,7 @@
 import express from "express";
 import cors from "cors";
 
+import apiRouter from "./routes/index.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import { notFoundHandler } from "./middleware/not-found.middleware.js";
 
@@ -26,6 +27,9 @@ app.get("/api/health", (_req, res) => {
     message: "ReliefGrid API is running successfully!",
   });
 });
+
+// API Routes
+app.use("/api", apiRouter);
 
 // 404 Not Found Middleware
 app.use(notFoundHandler);

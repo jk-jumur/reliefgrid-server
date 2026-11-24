@@ -7,25 +7,26 @@ if (!MONGODB_URI) {
   throw new Error("MONGODB_URI is missing from environment variables");
 }
 
-const client = new MongoClient(MONGODB_URI);
+export const client = new MongoClient(MONGODB_URI);
 
-let database: Db | null = null;
+export const db: Db = client.db("reliefgrid");
+
+let connectionPromise: Promise<MongoClient> | null = null;
 
 export const connectDB = async (): Promise<Db> => {
-  if (database) {
-    return database;
-  }
-
   try {
-    await client.connect();
+    if (!connectionPromise) {
+      connectionPromise = client.connect();
+    }
 
-    database = client.db("reliefgrid");
+    await connectionPromise;
 
-    console.log("MongoDB connected successfully!");
-
-    return database;
+    return db;
   } catch (error) {
+    connectionPromise = null;
+
     console.error("MongoDB connection failed:", error);
+
     throw error;
   }
 };

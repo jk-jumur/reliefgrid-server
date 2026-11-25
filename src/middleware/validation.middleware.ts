@@ -27,11 +27,18 @@ export const validateRequest = (schema: ZodType) => {
       return;
     }
 
-    const validatedData = result.data as {
-      body: unknown;
-    };
+    if (typeof result.data !== "object" || result.data === null) {
+      next(new Error("Validation schema must return an object"));
+      return;
+    }
 
-    req.body = validatedData.body;
+    if ("body" in result.data) {
+      req.body = result.data.body;
+    }
+
+    if ("query" in result.data) {
+      req.validatedQuery = result.data.query;
+    }
 
     next();
   };

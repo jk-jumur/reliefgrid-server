@@ -2,6 +2,7 @@
 import { MongoClient, type Db } from "mongodb";
 
 const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_DATABASE = process.env.MONGODB_DATABASE || "reliefgrid";
 
 if (!MONGODB_URI) {
   throw new Error("MONGODB_URI is missing from environment variables");
@@ -9,7 +10,7 @@ if (!MONGODB_URI) {
 
 export const client = new MongoClient(MONGODB_URI);
 
-export const db: Db = client.db("reliefgrid");
+export const db: Db = client.db(MONGODB_DATABASE);
 
 let connectionPromise: Promise<MongoClient> | null = null;
 

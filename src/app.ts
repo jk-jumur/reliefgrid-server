@@ -8,6 +8,7 @@ import apiRouter from "./routes/index.js";
 
 import { errorHandler } from "./middleware/error.middleware.js";
 import { notFoundHandler } from "./middleware/not-found.middleware.js";
+import { uploadDirectory } from "./modules/uploads/image-upload.middleware.js";
 
 const app = express();
 
@@ -25,6 +26,15 @@ app.all("/api/auth/*splat", toNodeHandler(auth));
 // Body Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(uploadDirectory, {
+  dotfiles: "deny",
+  index: false,
+  maxAge: "1d",
+  setHeaders: (res) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
+  },
+}));
 
 // Health Check
 app.get("/api/health", (_req, res) => {

@@ -19,7 +19,7 @@ const router = Router();
 router.get(
   "/",
   authenticate,
-  authorizeRoles("system_admin"),
+  authorizeRoles("system_admin", "emergency_coordinator"),
   validateRequest(listOrganizationsSchema),
   listOrganizationsHandler
 );

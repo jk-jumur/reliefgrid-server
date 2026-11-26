@@ -89,6 +89,7 @@ export const createIncidentSchema = z.object({
       .min(0, "Affected population cannot be negative"),
 
     imageUrl: imageReferenceSchema.optional(),
+    assignedCoordinator: z.string().trim().min(1).max(128).optional(),
   }),
 });
 

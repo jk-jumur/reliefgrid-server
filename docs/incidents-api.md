@@ -32,6 +32,9 @@ Allowed roles: `citizen`, `relief_organization`, `emergency_coordinator`, `syste
 `locationRisk` defaults to `medium`. The authenticated user's ID and organization
 ID are recorded as the reporter and organization. The server initializes the
 status and incident history and calculates the initial priority.
+System administrators may assign an active emergency coordinator with the
+optional `assignedCoordinator` user ID. Emergency coordinators submitting a
+report are assigned to it automatically; other reporters cannot set this field.
 
 ## List incidents
 
@@ -84,7 +87,8 @@ detail reads; each automatic priority change is recorded in history. A
 coordinator may set a manual priority, which is preserved from automatic
 recalculation.
 
-## Current limitation
+## Incident photos
 
-`imageUrl` accepts an existing URL; multipart image upload and storage have not
-been added yet.
+`imageUrl` accepts an existing URL or a URL returned by the authenticated
+`POST /api/uploads/images` endpoint. Multipart upload limits and storage
+behavior are documented in [Image Upload and Map APIs](./uploads-and-map-api.md).

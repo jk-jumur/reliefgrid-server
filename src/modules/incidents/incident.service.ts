@@ -10,6 +10,7 @@ import { connectDB } from "../../config/database.js";
 import { HttpError } from "../../utils/http-error.js";
 import { assertActiveUserRole } from "../../utils/user-validation.js";
 import type { AuthenticatedUser } from "../../types/auth.types.js";
+import { resolveIncidentCoordinatorAssignment } from "./incident.assignment.js";
 import {
   createIncidentSchema,
   listIncidentsSchema,
@@ -131,6 +132,17 @@ export const createIncident = async (
   reporter: AuthenticatedUser
 ) => {
   const collection = await getIncidentsCollection();
+  const assignedCoordinator = resolveIncidentCoordinatorAssignment(
+    reporter,
+    data.assignedCoordinator,
+  );
+  if (assignedCoordinator) {
+    await assertActiveUserRole(
+      assignedCoordinator,
+      "emergency_coordinator",
+      "Assigned coordinator is not active"
+    );
+  }
   const now = new Date();
   const { score: priorityScore, priority } = calculateIncidentPriority(
     data.severity,
@@ -146,7 +158,7 @@ export const createIncident = async (
     priorityScore,
     priorityOverridden: false,
     status: "reported",
-    assignedCoordinator: null,
+    assignedCoordinator,
     reportedBy: reporter.id,
     organizationId: reporter.organizationId,
     incidentHistory: [
@@ -157,6 +169,16 @@ export const createIncident = async (
         timestamp: now,
         changedBy: reporter.id,
       },
+      ...(assignedCoordinator
+        ? [{
+            action: "coordinator_assigned" as const,
+            status: "reported" as const,
+            priority,
+            timestamp: now,
+            changedBy: reporter.id,
+            details: [`Coordinator assigned: ${assignedCoordinator}`],
+          }]
+        : []),
     ],
     createdAt: now,
     updatedAt: now,

@@ -1,11 +1,12 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import { mapOperationsSchema } from "../../validators/map.validator.js";
 import { getMapOperations } from "./map.service.js";
 
 export const mapOperationsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

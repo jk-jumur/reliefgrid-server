@@ -1,5 +1,6 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   listVolunteersSchema,
@@ -15,7 +16,7 @@ import {
 } from "./volunteer.service.js";
 
 export const listEligibleVolunteerAccountsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -24,7 +25,7 @@ export const listEligibleVolunteerAccountsHandler = async (
 };
 
 export const createVolunteerHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -37,7 +38,7 @@ export const createVolunteerHandler = async (
 };
 
 export const listVolunteersHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -51,7 +52,7 @@ export const listVolunteersHandler = async (
 };
 
 export const getVolunteerHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -61,7 +62,7 @@ export const getVolunteerHandler = async (
 };
 
 export const updateVolunteerHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

@@ -1,5 +1,6 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   listResourcesSchema,
@@ -16,7 +17,7 @@ import {
 } from "./resource.service.js";
 
 export const createResourceHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -29,7 +30,7 @@ export const createResourceHandler = async (
 };
 
 export const listResourcesHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -43,7 +44,7 @@ export const listResourcesHandler = async (
 };
 
 export const getResourceHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -53,7 +54,7 @@ export const getResourceHandler = async (
 };
 
 export const updateResourceHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -68,7 +69,7 @@ export const updateResourceHandler = async (
 };
 
 export const moveResourceStockHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

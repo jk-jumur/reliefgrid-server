@@ -1,5 +1,6 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   deliverNotificationRequestSchema,
@@ -13,7 +14,7 @@ import {
 } from "./notification.service.js";
 
 export const listNotificationsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -22,7 +23,7 @@ export const listNotificationsHandler = async (
 };
 
 export const markNotificationReadHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -38,7 +39,7 @@ export const markNotificationReadHandler = async (
 };
 
 export const deliverNotificationHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -65,7 +66,7 @@ export const deliverNotificationHandler = async (
 };
 
 export const streamNotificationsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

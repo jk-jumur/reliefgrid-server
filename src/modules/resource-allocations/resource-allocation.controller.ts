@@ -1,5 +1,6 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   createResourceAllocationSchema,
@@ -20,7 +21,7 @@ import {
 } from "./distribution-verification.service.js";
 
 export const createResourceAllocationHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -34,7 +35,7 @@ export const createResourceAllocationHandler = async (
 };
 
 export const listResourceAllocationsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -48,7 +49,7 @@ export const listResourceAllocationsHandler = async (
 };
 
 export const getResourceAllocationHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -60,7 +61,7 @@ export const getResourceAllocationHandler = async (
 };
 
 export const updateResourceAllocationHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -77,7 +78,7 @@ export const updateResourceAllocationHandler = async (
 };
 
 export const createAllocationVerificationQrHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -94,7 +95,7 @@ export const createAllocationVerificationQrHandler = async (
 };
 
 export const verifyAllocationDeliveryHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

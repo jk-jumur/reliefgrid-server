@@ -1,14 +1,15 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { put } from "@vercel/blob";
 import { fileTypeFromBuffer } from "file-type";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import { newImageFilename, uploadDirectory } from "./image-upload.middleware.js";
 
 export const uploadImagesHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

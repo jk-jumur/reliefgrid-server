@@ -1,5 +1,6 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 
+import type { ExtendedRequest } from "../../types/request.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   listSheltersSchema,
@@ -19,7 +20,7 @@ import {
 } from "./shelter.service.js";
 
 export const createShelterHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -32,7 +33,7 @@ export const createShelterHandler = async (
 };
 
 export const listSheltersHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -46,7 +47,7 @@ export const listSheltersHandler = async (
 };
 
 export const getShelterReportsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -55,7 +56,7 @@ export const getShelterReportsHandler = async (
 };
 
 export const findNearestSheltersHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   const query = nearestShelterSchema.shape.query.parse(req.validatedQuery);
@@ -64,7 +65,7 @@ export const findNearestSheltersHandler = async (
 };
 
 export const getShelterHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -74,7 +75,7 @@ export const getShelterHandler = async (
 };
 
 export const updateShelterHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -89,7 +90,7 @@ export const updateShelterHandler = async (
 };
 
 export const updateShelterOccupancyHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

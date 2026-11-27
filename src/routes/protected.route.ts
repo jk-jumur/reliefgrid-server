@@ -1,13 +1,13 @@
-
 import { Router } from "express";
 
 import { authenticate } from "../middleware/auth.middleware.js";
 import { authorizeRoles } from "../middleware/authorize.middleware.js";
+import type { ExtendedRequest } from "../types/request.types.js";
 
 const router = Router();
 
 // Any authenticated and active user
-router.get("/protected", authenticate, (req, res) => {
+router.get("/protected", authenticate, (req: ExtendedRequest, res) => {
   res.status(200).json({
     success: true,
     message: "You have successfully accessed a protected route",

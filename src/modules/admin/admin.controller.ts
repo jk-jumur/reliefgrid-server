@@ -4,6 +4,7 @@ import {
   getPlatformConfiguration,
   updatePlatformConfiguration,
 } from "../../config/platform-configuration.js";
+import type { AuthenticatedUser } from "../../types/auth.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   adminUserIdParamsSchema,
@@ -17,8 +18,13 @@ import {
   updateAdminUser,
 } from "./admin.service.js";
 
+type ExtendedRequest = Request & {
+  user?: AuthenticatedUser;
+  validatedQuery?: unknown;
+};
+
 export const listAdminUsersHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -32,7 +38,7 @@ export const listAdminUsersHandler = async (
 };
 
 export const getAdminUserHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   const { userId } = adminUserIdParamsSchema.shape.params.parse(req.params);
@@ -41,7 +47,7 @@ export const getAdminUserHandler = async (
 };
 
 export const updateAdminUserHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -56,7 +62,7 @@ export const updateAdminUserHandler = async (
 };
 
 export const getPlatformConfigurationHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -65,7 +71,7 @@ export const getPlatformConfigurationHandler = async (
 };
 
 export const updatePlatformConfigurationHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

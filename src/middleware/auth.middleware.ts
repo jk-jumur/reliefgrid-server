@@ -1,4 +1,3 @@
-
 import type { Request, Response, NextFunction } from "express";
 import { ObjectId } from "mongodb";
 import { createRemoteJWKSet, jwtVerify, type JWTPayload } from "jose";
@@ -7,6 +6,10 @@ import { z } from "zod";
 import { connectDB } from "../config/database.js";
 import { USER_ROLES } from "../constants/roles.js";
 import type { AuthenticatedUser } from "../types/auth.types.js";
+
+type AuthRequest = Request & {
+  user?: AuthenticatedUser;
+};
 
 const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
 
@@ -27,7 +30,7 @@ const authPayloadSchema = z.object({
 });
 
 export const authenticate = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

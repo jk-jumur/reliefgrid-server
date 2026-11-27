@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 
+import type { AuthenticatedUser } from "../../types/auth.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   incidentIdParamsSchema,
@@ -13,8 +14,13 @@ import {
   updateIncident,
 } from "./incident.service.js";
 
+type ExtendedRequest = Request & {
+  user?: AuthenticatedUser;
+  validatedQuery?: unknown;
+};
+
 export const createIncidentHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) {
@@ -31,7 +37,7 @@ export const createIncidentHandler = async (
 };
 
 export const listIncidentsHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   const query = listIncidentsSchema.shape.query.parse(req.validatedQuery);
@@ -45,7 +51,7 @@ export const listIncidentsHandler = async (
 };
 
 export const getIncidentHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   const { incidentId } = incidentIdParamsSchema.shape.params.parse(req.params);
@@ -58,7 +64,7 @@ export const getIncidentHandler = async (
 };
 
 export const updateIncidentHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) {

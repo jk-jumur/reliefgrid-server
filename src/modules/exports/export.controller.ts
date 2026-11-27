@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 
+import type { AuthenticatedUser } from "../../types/auth.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   emergencyReportSchema,
@@ -8,8 +9,13 @@ import {
 import { getExportData, toCsv } from "./export.service.js";
 import { generateEmergencyReport } from "./emergency-report.service.js";
 
+type ExtendedRequest = Request & {
+  user?: AuthenticatedUser;
+  validatedQuery?: unknown;
+};
+
 export const emergencyReportHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -24,7 +30,7 @@ export const emergencyReportHandler = async (
 };
 
 export const exportDataHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

@@ -26,7 +26,7 @@ app.use(
 );
 
 // Better Auth Routes (must be before body parsers)
-app.use("/api/auth", toNodeHandler(auth));
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 // Body Parsers
 app.use(express.json());

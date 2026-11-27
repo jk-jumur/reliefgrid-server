@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 
+import type { AuthenticatedUser } from "../../types/auth.types.js";
 import { HttpError } from "../../utils/http-error.js";
 import {
   analyticsOverviewSchema,
@@ -10,8 +11,13 @@ import {
 } from "./analytics.service.js";
 import { getDemandForecast } from "./demand-forecast.service.js";
 
+type ExtendedRequest = Request & {
+  user?: AuthenticatedUser;
+  validatedQuery?: unknown;
+};
+
 export const analyticsOverviewHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
@@ -21,7 +27,7 @@ export const analyticsOverviewHandler = async (
 };
 
 export const demandForecastHandler = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");

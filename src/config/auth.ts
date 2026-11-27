@@ -1,4 +1,3 @@
-
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { jwt } from "better-auth/plugins";
@@ -9,6 +8,7 @@ import { USER_ROLES } from "../constants/roles.js";
 const BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET;
 const BETTER_AUTH_URL = process.env.BETTER_AUTH_URL;
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
+const isProduction = process.env.NODE_ENV === "production" || BETTER_AUTH_URL?.startsWith("https://");
 
 if (!BETTER_AUTH_SECRET) {
   throw new Error("BETTER_AUTH_SECRET is missing");
@@ -29,7 +29,14 @@ export const auth = betterAuth({
 
   baseURL: BETTER_AUTH_URL,
 
-  trustedOrigins: [CLIENT_URL],
+  trustedOrigins: [CLIENT_URL, "https://reliefgrid-client.vercel.app"],
+
+  advanced: {
+    defaultCookieAttributes: {
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
+    },
+  },
 
   user: {
     additionalFields: {

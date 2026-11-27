@@ -10,7 +10,7 @@ quantities as trusted.
 
 | Collection | Purpose and key relationships |
 | --- | --- |
-| `user` | Better Auth accounts and current role, active state, and optional `organizationId`. Organization accounts must refer to an active organization. |
+| `user` | Better Auth accounts and current role, active state, optional SMS phone, and optional `organizationId`. Organization accounts must refer to an active organization. |
 | `organizations` | Organization name, region, status, creator, and change history. Its string `_id` is referenced by organization-owned resources, requests, incidents, and accounts. |
 | `incidents` | Incident details, coordinates, severity, calculated/overridden priority, assigned coordinator, reporter and optional organization. `incidentHistory` records reports, updates, status, coordinator, and priority changes. |
 | `emergencyRequests` | Request category, quantity, urgency, location, requester and optional incident/organization assignments. `requestHistory` records status, assignment, and priority changes; allocated/delivered quantities track fulfillment. |
@@ -27,7 +27,8 @@ quantities as trusted.
 
 Activity logs are a read-time projection of persisted module histories; they
 are not a second, independently mutable copy of operational events. Uploaded
-image bytes are stored under `uploads/`, not in MongoDB.
+image bytes are stored in the local `uploads/` directory during development or
+in Vercel Blob when deployed there; image bytes are not stored in MongoDB.
 
 ## Integrity invariants
 

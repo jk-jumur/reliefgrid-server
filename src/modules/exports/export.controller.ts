@@ -14,7 +14,7 @@ export const emergencyReportHandler = async (
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
   const query = emergencyReportSchema.shape.query.parse(req.validatedQuery);
-  const report = await generateEmergencyReport(query, req.user);
+  const report = await generateEmergencyReport(query);
   const date = new Date().toISOString().slice(0, 10);
   res
     .status(200)

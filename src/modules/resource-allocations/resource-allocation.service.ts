@@ -1,4 +1,5 @@
 import {
+  type Document,
   ObjectId,
   type Filter,
   type UpdateFilter,
@@ -285,10 +286,86 @@ export const listResourceAllocations = async (
   }
   const filter: Filter<ResourceAllocationDocument> = { $and: filters };
   const skip = (query.page - 1) * query.limit;
-  const [items, total] = await Promise.all([
-    collection.find(filter).sort({ createdAt: -1 }).skip(skip).limit(query.limit).toArray(),
-    collection.countDocuments(filter),
-  ]);
+  let items: ResourceAllocationDocument[];
+  let total: number;
+  if (query.search) {
+    const pattern = new RegExp(
+      query.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+      "i"
+    );
+    const searchMatches: Document[] = [
+      { status: pattern },
+      { "request.requestType": pattern },
+      { "request.location": pattern },
+      { "request.description": pattern },
+      { "resource.name": pattern },
+      { "resource.category": pattern },
+      { "resource.storageLocation": pattern },
+      { "organization.name": pattern },
+      { "organization.region": pattern },
+    ];
+    if (/^[a-f\d]{24}$/i.test(query.search)) {
+      const id = new ObjectId(query.search);
+      searchMatches.push(
+        { emergencyRequestId: id },
+        { resourceId: id }
+      );
+    }
+    searchMatches.push({ organizationId: query.search });
+    const lookupStages: Document[] = [
+      {
+        $lookup: {
+          from: "emergencyRequests",
+          localField: "emergencyRequestId",
+          foreignField: "_id",
+          as: "request",
+        },
+      },
+      {
+        $lookup: {
+          from: "resources",
+          localField: "resourceId",
+          foreignField: "_id",
+          as: "resource",
+        },
+      },
+      {
+        $lookup: {
+          from: "organizations",
+          localField: "organizationId",
+          foreignField: "_id",
+          as: "organization",
+        },
+      },
+      { $match: { $or: searchMatches } },
+    ];
+    const [pageItems, countResult] = await Promise.all([
+      collection
+        .aggregate<ResourceAllocationDocument>([
+          { $match: filter },
+          ...lookupStages,
+          { $project: { request: 0, resource: 0, organization: 0 } },
+          { $sort: { createdAt: -1 } },
+          { $skip: skip },
+          { $limit: query.limit },
+        ])
+        .toArray(),
+      collection
+        .aggregate<{ total: number }>([
+          { $match: filter },
+          ...lookupStages,
+          { $count: "total" },
+        ])
+        .toArray(),
+    ]);
+    items = pageItems;
+    total = countResult[0]?.total ?? 0;
+  } else {
+    [items, total] = await Promise.all([
+      collection.find(filter).sort({ createdAt: -1 }).skip(skip).limit(query.limit).toArray(),
+      collection.countDocuments(filter),
+    ]);
+  }
   return {
     items,
     pagination: {

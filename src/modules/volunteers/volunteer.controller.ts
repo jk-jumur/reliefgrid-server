@@ -7,11 +7,21 @@ import {
   volunteerIdParamsSchema,
 } from "../../validators/volunteer.validator.js";
 import {
+  listEligibleVolunteerAccounts,
   createVolunteer,
   getVolunteerById,
   listVolunteers,
   updateVolunteer,
 } from "./volunteer.service.js";
+
+export const listEligibleVolunteerAccountsHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  if (!req.user) throw new HttpError(401, "Authentication required");
+  const accounts = await listEligibleVolunteerAccounts();
+  res.status(200).json({ success: true, data: accounts });
+};
 
 export const createVolunteerHandler = async (
   req: Request,

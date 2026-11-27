@@ -9,6 +9,14 @@ export interface NotificationDocument {
   entityId: string;
   timestamp: Date;
   readAt: Date | null;
+  deliveryStatus?: Partial<Record<
+    "email" | "sms",
+    {
+      status: "sending" | "sent" | "failed";
+      attempts: number;
+      lastError?: string;
+    }
+  >>;
 }
 
 export interface NotificationReceiptDocument {

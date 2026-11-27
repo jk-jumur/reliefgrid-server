@@ -8,8 +8,9 @@ labeled and are never loaded automatically.
 
 `GET /api/analytics/overview?days=30`
 
-Allowed roles: `emergency_coordinator`, `system_admin`. `days` is optional and
-must be between 1 and 365.
+Available to every authenticated role. The endpoint returns aggregate
+operational metrics only; it does not expose record-level personal data.
+`days` is optional and must be between 1 and 365.
 
 The response contains live counts/totals for active incidents, affected people,
 pending requests, available resource units, active/full shelters, volunteer

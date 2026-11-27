@@ -58,6 +58,7 @@ export const listTasksSchema = z.object({
   query: z.object({
     page: z.coerce.number().int().min(1).default(1),
     limit: z.coerce.number().int().min(1).max(100).default(20),
+    search: z.string().trim().max(200).optional(),
     status: taskStatusEnum.optional(),
     incidentId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional(),
     teamId: z.string().regex(/^[0-9a-fA-F]{24}$/).optional(),

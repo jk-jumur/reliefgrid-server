@@ -77,7 +77,9 @@ creates the allocation with history atomically.
 ### List and view allocations
 
 - `GET /api/resource-allocations` — paginated results; optional `page`, `limit`,
-  `status`, `emergencyRequestId`, and `resourceId`.
+  case-insensitive `search`, `status`, `emergencyRequestId`, and `resourceId`.
+  Search covers the allocation status, linked request type/location/description,
+  resource name/category/storage location, and organization name/region.
 - `GET /api/resource-allocations/:allocationId` — allocation and status history.
 - `POST /api/resource-allocations/:allocationId/verification-qr` — create a
   one-time QR for an `in_transit` allocation. Relief organizations may issue

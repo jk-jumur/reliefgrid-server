@@ -6,11 +6,16 @@
 Authenticated users may upload up to ten JPEG, PNG, or WebP images per request;
 each image is limited to 5 MB.
 
-The response contains a relative `/uploads/<generated-name>` URL for each
-stored file. Use that URL as an incident `imageUrl` or a task field-report
-`photoUrls` entry. Files are stored under the server's ignored `uploads/`
-directory and served as static images. Production deployments need persistent
-file storage.
+The response contains a URL for each stored file. Local development returns a
+relative `/uploads/<generated-name>` URL; these files are served from the
+server's ignored `uploads/` directory. When `BLOB_READ_WRITE_TOKEN` is
+configured, uploads are stored in a public Vercel Blob store and return its
+absolute HTTPS URL. Vercel deployments require this persistent Blob storage
+configuration.
+
+Use the returned URL as an incident `imageUrl` or a task field-report
+`photoUrls` entry. Image contents are checked against the declared JPEG, PNG,
+or WebP media type before storage.
 
 ## Operations map
 

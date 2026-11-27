@@ -1,19 +1,13 @@
 import type { z } from "zod";
 
 import { connectDB } from "../../config/database.js";
-import type { AuthenticatedUser } from "../../types/auth.types.js";
-import { HttpError } from "../../utils/http-error.js";
 import { analyticsOverviewSchema } from "../../validators/analytics.validator.js";
 
 type OverviewQuery = z.infer<typeof analyticsOverviewSchema>["query"];
 
 export const getAnalyticsOverview = async (
-  query: OverviewQuery,
-  user: AuthenticatedUser
+  query: OverviewQuery
 ) => {
-  if (user.role !== "system_admin" && user.role !== "emergency_coordinator") {
-    throw new HttpError(403, "Only emergency coordinators and system admins can access analytics");
-  }
   const db = await connectDB();
   const incidents = db.collection("incidents");
   const requests = db.collection("emergencyRequests");

@@ -39,6 +39,12 @@ Email notification delivery uses Resend (`RESEND_API_KEY`,
 their endpoints return an explicit configuration error until credentials are
 provided.
 
+On Vercel, connect a Vercel Blob store and configure its
+`BLOB_READ_WRITE_TOKEN` environment variable. Image uploads use Blob storage
+there because Vercel Functions do not provide persistent local file storage.
+Local development continues to store uploaded images in the ignored
+`uploads/` directory.
+
 Public sign-up cannot assign privileged roles. To bootstrap the first admin,
 first create a normal account through Better Auth, then run this one-time
 operator command with that account's email:
@@ -124,8 +130,9 @@ can create a task with skill-matched available volunteers through
 `POST /api/tasks/auto-assign`. Its JSON body includes the normal task fields,
 `requiredSkills` (for example `["medical", "first aid"]`), and `volunteerCount`.
 The assignment is committed only if the selected volunteers are still
-available. Live SMS and email delivery are deferred; in-app notifications
-remain available.
+available. Email and SMS delivery are supported through the configured
+Resend and Twilio providers; those providers require valid credentials and
+sender configuration in the deployment environment.
 
 API details, data relationships, and business invariants are documented in the
 [`docs/`](./docs/) directory. All operational lists are paginated; critical
@@ -134,5 +141,37 @@ in-memory fixtures, power dashboards, notifications, activity views, exports,
 maps, and reports.
 
 Uploaded images are stored in the local `uploads/` directory, which is ignored
-by Git. Deployments must attach persistent storage or replace this local
-storage adapter with an object-storage provider.
+by Git during local development. Vercel deployments use the configured public
+Blob store for persistent image URLs.
+
+## Deploy frontend and API to Vercel
+
+The Express app is exported from `src/app.ts` for Vercel Functions. The local
+Node server bootstrap is `src/start.ts`; use `npm run dev` or `npm start` for
+non-Vercel hosting.
+
+Create a separate Vercel project for this directory, then add these Production
+environment variables in its project settings:
+
+- `MONGODB_URI` — production MongoDB replica-set or sharded-cluster URI
+- `MONGODB_DATABASE` — for example, `reliefgrid`
+- `BETTER_AUTH_SECRET` — a newly generated, strong secret
+- `BETTER_AUTH_URL` — the deployed API's `https://` origin
+- `CLIENT_URL` — the deployed frontend's `https://` origin
+- `BLOB_READ_WRITE_TOKEN` — created by connecting a Vercel Blob store
+- `RESEND_API_KEY` and `RESEND_FROM_EMAIL` — optional email delivery
+- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, and `TWILIO_FROM_NUMBER` —
+  optional SMS delivery
+
+Create another Vercel project rooted at the client directory and set
+`NEXT_PUBLIC_API_URL` to the deployed API origin (without `/api`). Deploy the
+API first, then deploy the frontend with its API URL. Set the API's
+`CLIENT_URL` to the frontend's production domain and redeploy after changing
+either project's environment variables.
+
+Do not use a local MongoDB address for production. Configure MongoDB Atlas
+network access for Vercel and use a least-privilege database user. The
+application requires replica-set or sharded-cluster support for transactions
+and Change Streams. Keep all secrets in Vercel's encrypted environment
+settings; never commit them or place them in client-side `NEXT_PUBLIC_`
+variables.

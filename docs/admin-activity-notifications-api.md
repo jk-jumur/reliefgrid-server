@@ -47,7 +47,8 @@ histories. It reflects persisted operational events rather than sample events.
 ## Notifications and real-time updates
 
 - `GET /api/notifications` returns current action-required records for the
-  authenticated role, with each user's read state.
+  authenticated role, with each user's read state and per-channel delivery
+  status.
 - `PATCH /api/notifications/:notificationId/read` saves a per-user read receipt.
 - `POST /api/notifications/:notificationId/deliver` sends an existing
   notification to the authenticated user's own email and/or phone. Example:

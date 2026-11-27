@@ -16,7 +16,7 @@ export const analyticsOverviewHandler = async (
 ): Promise<void> => {
   if (!req.user) throw new HttpError(401, "Authentication required");
   const query = analyticsOverviewSchema.shape.query.parse(req.validatedQuery);
-  const overview = await getAnalyticsOverview(query, req.user);
+  const overview = await getAnalyticsOverview(query);
   res.status(200).json({ success: true, data: overview });
 };
 

@@ -71,6 +71,7 @@ export const auth = betterAuth({
           id: user.id,
           email: user.email,
           role: user.role,
+          phone: user.phone ?? null,
           organizationId: user.organizationId ?? null,
           isActive: user.isActive,
         }),

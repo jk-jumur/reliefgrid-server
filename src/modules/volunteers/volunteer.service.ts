@@ -39,6 +39,46 @@ const getVolunteersCollection = async () => {
   return collection;
 };
 
+export const listEligibleVolunteerAccounts = async () => {
+  const db = await connectDB();
+  return db.collection("user").aggregate<{
+    id: string;
+    name?: string;
+    email?: string;
+  }>([
+    {
+      $match: {
+        role: "volunteer",
+        isActive: { $ne: false },
+      },
+    },
+    {
+      $addFields: {
+        accountId: { $toString: { $ifNull: ["$id", "$_id"] } },
+      },
+    },
+    {
+      $lookup: {
+        from: "volunteers",
+        localField: "accountId",
+        foreignField: "userId",
+        as: "profiles",
+      },
+    },
+    { $match: { profiles: { $eq: [] } } },
+    { $sort: { name: 1, email: 1 } },
+    { $limit: 100 },
+    {
+      $project: {
+        _id: 0,
+        id: "$accountId",
+        name: 1,
+        email: 1,
+      },
+    },
+  ]).toArray();
+};
+
 const getReadScope = (user: AuthenticatedUser): Filter<VolunteerDocument> => {
   if (user.role === "system_admin" || user.role === "emergency_coordinator") {
     return {};

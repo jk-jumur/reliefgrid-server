@@ -10,6 +10,7 @@ import {
   volunteerIdParamsSchema,
 } from "../../validators/volunteer.validator.js";
 import {
+  listEligibleVolunteerAccountsHandler,
   createVolunteerHandler,
   getVolunteerHandler,
   listVolunteersHandler,
@@ -19,6 +20,12 @@ import {
 const volunteerReaders = ["volunteer", "emergency_coordinator", "system_admin"] as const;
 const router = Router();
 
+router.get(
+  "/eligible-accounts",
+  authenticate,
+  authorizeRoles("emergency_coordinator", "system_admin"),
+  listEligibleVolunteerAccountsHandler
+);
 router.get(
   "/",
   authenticate,

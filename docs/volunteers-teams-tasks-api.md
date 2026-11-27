@@ -8,6 +8,8 @@ Endpoints are under `/api/volunteers`.
 
 - `POST /api/volunteers` creates a profile for the authenticated volunteer, or
   for an active volunteer account when called by a coordinator/admin.
+- `GET /api/volunteers/eligible-accounts` lists up to 100 active volunteer
+  accounts without profiles for coordinator/admin profile registration.
 - `GET /api/volunteers` supports `page`, `limit`, `search`, `skill`, and
   `availability`.
 - `GET /api/volunteers/:volunteerId` returns a profile and activity history.
@@ -36,8 +38,10 @@ Endpoints are under `/api/tasks`.
 
 - `POST /api/tasks` assigns a task to an available volunteer or an active team.
   Optional `incidentId` and `emergencyRequestId` links must exist.
-- `GET /api/tasks` supports `page`, `limit`, `status`, `incidentId`, and
-  `teamId`. Volunteer results are limited to tasks assigned to their profile.
+- `GET /api/tasks` supports `page`, `limit`, case-insensitive `search`, `status`,
+  `incidentId`, and `teamId`. Search covers task title, description, location,
+  status, and an exact task ID. Volunteer results are limited to tasks assigned
+  to their profile.
 - `GET /api/tasks/:taskId` returns the assignment, status history, and reports.
 - `PATCH /api/tasks/:taskId/status` progresses assigned tasks to
   `in_progress` and then `completed`. Coordinators/admins may also cancel tasks.

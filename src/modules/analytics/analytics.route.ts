@@ -17,7 +17,6 @@ const router = Router();
 router.get(
   "/overview",
   authenticate,
-  authorizeRoles("emergency_coordinator", "system_admin"),
   validateRequest(analyticsOverviewSchema),
   analyticsOverviewHandler
 );

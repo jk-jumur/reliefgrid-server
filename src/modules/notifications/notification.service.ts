@@ -199,9 +199,37 @@ const getNotifications = async (user: AuthenticatedUser) => {
   const readAtById = new Map(
     readReceipts.map((receipt) => [receipt.notificationId, receipt.readAt])
   );
+  const deliveryRecords = await db
+    .collection<NotificationDeliveryDocument>("notificationDeliveries")
+    .find({
+      recipientUserId: user.id,
+      notificationId: { $in: sources.map((notification) => notification.notificationId) },
+    })
+    .toArray();
+  const deliveryStatusById = new Map<
+    string,
+    NonNullable<NotificationDocument["deliveryStatus"]>
+  >();
+  for (const delivery of deliveryRecords) {
+    const channelStatus = deliveryStatusById.get(delivery.notificationId) ?? {};
+    const sendingExpired =
+      delivery.status === "sending" &&
+      delivery.updatedAt.getTime() < Date.now() - 5 * 60 * 1000;
+    channelStatus[delivery.channel] = {
+      status: sendingExpired ? "failed" : delivery.status,
+      attempts: delivery.attempts,
+      ...(delivery.lastError
+        ? { lastError: delivery.lastError }
+        : sendingExpired
+          ? { lastError: "Previous delivery attempt expired; you can retry." }
+          : {}),
+    };
+    deliveryStatusById.set(delivery.notificationId, channelStatus);
+  }
   return sources.slice(0, 100).map((notification) => ({
     ...notification,
     readAt: readAtById.get(notification.notificationId) ?? null,
+    deliveryStatus: deliveryStatusById.get(notification.notificationId) ?? {},
   }));
 };
 

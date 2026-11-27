@@ -268,6 +268,22 @@ export const listTasks = async (
   if (query.status) filters.push({ status: query.status });
   if (query.incidentId) filters.push({ incidentId: new ObjectId(query.incidentId) });
   if (query.teamId) filters.push({ teamId: new ObjectId(query.teamId) });
+  if (query.search) {
+    const pattern = new RegExp(
+      query.search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+      "i"
+    );
+    const searchFilters: Filter<TaskDocument>[] = [
+      { title: pattern },
+      { description: pattern },
+      { location: pattern },
+      { status: pattern },
+    ];
+    if (/^[a-f\d]{24}$/i.test(query.search)) {
+      searchFilters.push({ _id: new ObjectId(query.search) });
+    }
+    filters.push({ $or: searchFilters });
+  }
   const filter: Filter<TaskDocument> = { $and: filters };
   const skip = (query.page - 1) * query.limit;
   const [items, total] = await Promise.all([
